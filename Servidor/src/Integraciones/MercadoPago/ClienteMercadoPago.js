@@ -57,7 +57,7 @@ export class ClienteMercadoPago {
     return {
       Modo: "MERCADOPAGO",
       ReferenciaExterna: String(R.id),
-      UrlPago: R.init_point,
+      UrlPago: R.sandbox_init_point || R.init_point,
     };
   }
   // Comprueba la clave antes de aceptar la notificación.
