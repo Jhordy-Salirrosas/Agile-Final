@@ -29,7 +29,7 @@ export class RepositorioSolicitudes {
   }
   async BuscarPorCodigo(Codigo, Cliente = this.BaseDatos) {
     const R = await Cliente.query(
-      `SELECT s.*,n.ruc,n.razon_social,n.domicilio_fiscal,n.ubigeo,n.correo,b.numero_boleta,b.ruta_archivo boleta_ruta,l.numero_licencia,l.ruta_archivo licencia_ruta,l.fecha_generacion,l.fecha_vencimiento FROM solicitudes s JOIN negocios n ON n.id=s.negocio_id LEFT JOIN boletas b ON b.solicitud_id=s.id LEFT JOIN licencias l ON l.solicitud_id=s.id WHERE UPPER(s.codigo_pago)=UPPER($1) OR UPPER(s.codigo_inspeccion)=UPPER($1) LIMIT 1`,
+      `SELECT s.*,n.ruc,n.razon_social,n.domicilio_fiscal,n.ubigeo,n.correo,b.numero_boleta,b.ruta_archivo boleta_ruta,l.numero_licencia,l.ruta_archivo licencia_ruta,l.fecha_generacion,l.fecha_vencimiento,p.respuesta_proveedor->>'UrlPago' AS url_pago FROM solicitudes s JOIN negocios n ON n.id=s.negocio_id LEFT JOIN boletas b ON b.solicitud_id=s.id LEFT JOIN licencias l ON l.solicitud_id=s.id LEFT JOIN pagos p ON p.solicitud_id=s.id AND p.estado='PENDIENTE' WHERE UPPER(s.codigo_pago)=UPPER($1) OR UPPER(s.codigo_inspeccion)=UPPER($1) LIMIT 1`,
       [Codigo],
     );
     return R.rows[0] || null;

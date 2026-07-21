@@ -30,6 +30,8 @@ export class ClienteMercadoPago {
         ReferenciaExterna: `DEMO-${D.PagoId}`,
         UrlPago: null,
       };
+    const UrlRetorno = this.Configuracion.MercadoPagoUrlRetorno;
+    const EsUrlPublica = UrlRetorno && !UrlRetorno.includes("localhost");
     const P = new Preference(this.Cliente),
       R = await P.create({
         body: {
@@ -43,20 +45,19 @@ export class ClienteMercadoPago {
             },
           ],
           external_reference: String(D.PagoId),
-          notification_url: `${this.Configuracion.UrlPublicaServidor}/api/pagos/webhook`,
+          ...(EsUrlPublica ? { notification_url: `${this.Configuracion.UrlPublicaServidor}/api/pagos/webhook` } : {}),
           back_urls: {
-            success: this.Configuracion.MercadoPagoUrlRetorno,
-            pending: this.Configuracion.MercadoPagoUrlRetorno,
-            failure: this.Configuracion.MercadoPagoUrlRetorno,
+            success: UrlRetorno,
+            pending: UrlRetorno,
+            failure: UrlRetorno,
           },
-          auto_return: "approved",
+          ...(EsUrlPublica ? { auto_return: "approved" } : {}),
         },
       });
     return {
       Modo: "MERCADOPAGO",
       ReferenciaExterna: String(R.id),
       UrlPago: R.init_point,
-      UrlPagoPrueba: R.sandbox_init_point,
     };
   }
   // Comprueba la clave antes de aceptar la notificación.

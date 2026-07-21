@@ -23,13 +23,13 @@ async function InterpretarRespuesta(Respuesta) {
     : await Respuesta.text();
 
   if (!Respuesta.ok) {
-    const Error = new Error(
+    const Excepcion = new Error(
       Cuerpo?.Mensaje || "No se pudo completar la operación.",
     );
-    Error.Codigo = Cuerpo?.Codigo || "ERROR_API";
-    Error.Detalles = Cuerpo?.Detalles || null;
-    Error.EstadoHttp = Respuesta.status;
-    throw Error;
+    Excepcion.Codigo = Cuerpo?.Codigo || "ERROR_API";
+    Excepcion.Detalles = Cuerpo?.Detalles || null;
+    Excepcion.EstadoHttp = Respuesta.status;
+    throw Excepcion;
   }
 
   return Cuerpo?.Datos ?? Cuerpo;

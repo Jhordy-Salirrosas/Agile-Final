@@ -10,7 +10,7 @@ export const EstadosSolicitud = Object.freeze({
 });
 // Enumera los únicos cambios de estado permitidos.
 const Transiciones = {
-  PAGADO_PENDIENTE: ["EN_PROCESO", "APROBADO"],
+  PAGADO_PENDIENTE: ["EN_PROCESO", "APROBADO", "RECHAZADO"],
   EN_PROCESO: ["INSPECCIONADO_OBSERVACIONES", "APROBADO"],
   INSPECCIONADO_OBSERVACIONES: ["APROBADO", "RECHAZADO"],
   RECHAZADO: [],

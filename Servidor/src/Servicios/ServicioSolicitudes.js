@@ -77,13 +77,23 @@ export class ServicioSolicitudes {
     const NegocioExistente = await this.RepositorioNegocios.BuscarPorRuc(
       Datos.Ruc,
     );
-    if (
-      NegocioExistente &&
-      (await this.RepositorioSolicitudes.BuscarPendientePorNegocio(
+    if (NegocioExistente) {
+      const TramitePendiente = await this.RepositorioSolicitudes.BuscarPendientePorNegocio(
         NegocioExistente.id,
-      ))
-    )
-      throw new ErrorConflicto("Ya existe un trámite pendiente para este RUC.");
+      );
+      if (TramitePendiente) {
+        if (TramitePendiente.estado === EstadosSolicitud.PagadoPendiente) {
+          // El usuario abandonó el trámite anterior antes de pagar. Lo cancelamos (RECHAZADO).
+          await this.RepositorioSolicitudes.ActualizarEstado(
+            TramitePendiente.id,
+            EstadosSolicitud.Rechazado,
+          );
+        } else {
+          // El trámite ya está en proceso en la municipalidad.
+          throw new ErrorConflicto("Ya existe un trámite en proceso para este RUC.");
+        }
+      }
+    }
     const Negocio = await this.RepositorioNegocios.CrearOActualizar({
       Ruc: Datos.Ruc,
       RazonSocial: DatosRuc.RazonSocial,
