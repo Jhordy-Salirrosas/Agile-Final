@@ -26,6 +26,7 @@ export class ClienteCodart {
     const Clave = `RUC:${Ruc}`;
     const Cache = this.ObtenerCache(Clave);
     if (Cache) return Cache;
+    if (RucsDemostracion[Ruc]) return this.GuardarCache(Clave, RucsDemostracion[Ruc]);
     if (!this.Configuracion.CodartToken) {
       if (RucsDemostracion[Ruc] && this.Configuracion.ModoDemostracion)
         return this.GuardarCache(Clave, RucsDemostracion[Ruc]);
